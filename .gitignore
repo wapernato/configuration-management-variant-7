@@ -1,0 +1,13 @@
+*.class
+*.jar
+*.war
+build/
+dist/
+out/
+target/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+tmp/
+__pycache__/
