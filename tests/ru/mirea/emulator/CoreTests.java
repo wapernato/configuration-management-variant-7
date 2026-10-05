@@ -14,6 +14,8 @@ public final class CoreTests {
         suite.stubs();
         suite.errors();
         suite.identity();
+        ConfigTests.run(suite.checks);
+        StartupTests.run(suite.checks);
         suite.checks.report("CoreTests");
     }
 

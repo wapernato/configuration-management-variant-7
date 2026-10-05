@@ -15,6 +15,7 @@ find "$PROJECT_DIR/tests" -name '*.java' -print |
     -d "$PROJECT_DIR/build/test-classes" @"$PROJECT_DIR/build/tests.txt"
 CP="$PROJECT_DIR/build/classes:$PROJECT_DIR/build/test-classes"
 "$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.CoreTests
+"$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.CliTests
 if [ "${GUI_TESTS:-0}" = 1 ]; then
     "$JAVA" -cp "$CP" ru.mirea.emulator.GuiTests
 fi

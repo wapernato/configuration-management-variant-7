@@ -8,15 +8,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 /** Графический терминал Swing с оформлением тёмной оболочки. */
 public final class TerminalWindow extends JFrame {
     private final TerminalPane terminal;
+    private final AppConfig config;
 
     /** Открыть окно с реальными данными ОС в заголовке. */
     public TerminalWindow() {
+        this(AppConfig.defaults());
+    }
+
+    /** Создать окно с параметрами второго этапа. */
+    public TerminalWindow(AppConfig config) {
+        this.config = config;
         HostIdentity identity = HostIdentity.current();
         setTitle(identity.title());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -24,8 +32,9 @@ public final class TerminalWindow extends JFrame {
         setSize(1040, 660);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        add(chrome("●  shell", "JAVA  /  STAGE 01"), BorderLayout.NORTH);
+        add(chrome("●  shell", "JAVA  /  STAGES 01 + 02"), BorderLayout.NORTH);
         terminal = new TerminalPane(identity, this::dispose);
+        config.debugLines().forEach(line -> terminal.printMessage(line, TerminalTheme.MUTED));
         JScrollPane scroll = new JScrollPane(terminal);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.getVerticalScrollBar().setPreferredSize(new Dimension(9, 0));
@@ -58,6 +67,11 @@ public final class TerminalWindow extends JFrame {
     public void open() {
         setVisible(true);
         terminal.requestFocusInWindow();
+        if (config.startupScript() != null) {
+            SwingUtilities.invokeLater(() -> new StartupRunner().run(
+                    config.startupScript(), terminal::submitLine,
+                    message -> terminal.printMessage(message, TerminalTheme.RED)));
+        }
     }
 
     /** Доступ к области терминала для интеграционных проверок. */

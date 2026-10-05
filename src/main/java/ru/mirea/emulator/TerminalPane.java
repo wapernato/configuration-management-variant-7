@@ -24,6 +24,7 @@ public final class TerminalPane extends JTextPane {
     private final HostIdentity identity;
     private final Runnable onExit;
     private int inputStart;
+    private int promptStart;
     private int historyPosition;
     private String draft = "";
     private boolean writing;
@@ -45,6 +46,10 @@ public final class TerminalPane extends JTextPane {
         bind("ctrl L", "clear", this::clearScreen);
         bind("ctrl C", "cancel", this::cancelInput);
         bind("HOME", "input-home", () -> setCaretPosition(inputStart));
+        bind("ctrl A", "input-home", () -> setCaretPosition(inputStart));
+        bind("ctrl E", "input-end", () -> setCaretPosition(getDocument().getLength()));
+        bind("meta C", "copy-text", this::copy);
+        bind("meta V", "paste-text", this::paste);
         append("SHELL EMULATOR  /  VARIANT 07\n", TerminalTheme.BLUE);
         append("ls [путь]  ·  cd [путь]  ·  exit\n\n", TerminalTheme.MUTED);
         prompt();
@@ -71,7 +76,7 @@ public final class TerminalPane extends JTextPane {
     }
 
     /** Исполнить текущую строку, записать результат и показать приглашение. */
-    public void submit() {
+    public CommandResult submit() {
         String line = input();
         append("\n", TerminalTheme.FOREGROUND);
         remember(line);
@@ -85,6 +90,29 @@ public final class TerminalPane extends JTextPane {
         } else {
             prompt();
         }
+        return result;
+    }
+
+    /** Исполнить строку стартового скрипта тем же способом, что ввод пользователя. */
+    public CommandResult submitLine(String line) {
+        replaceInput(line);
+        return submit();
+    }
+
+    /** Показать служебное сообщение над приглашением, сохранив текущий ввод. */
+    public void printMessage(String text, Color color) {
+        String current = input();
+        writing = true;
+        try {
+            getDocument().remove(promptStart, getDocument().getLength() - promptStart);
+        } catch (BadLocationException exception) {
+            throw new IllegalStateException(exception);
+        } finally {
+            writing = false;
+        }
+        append(text + "\n", color);
+        prompt();
+        replaceInput(current);
     }
 
     /** Получить только редактируемую часть текущей строки. */
@@ -146,6 +174,7 @@ public final class TerminalPane extends JTextPane {
     }
 
     private void prompt() {
+        promptStart = getDocument().getLength();
         append(identity.user() + "@" + identity.host(), TerminalTheme.GREEN);
         append(":", TerminalTheme.MUTED);
         append("~", TerminalTheme.BLUE);
@@ -185,6 +214,11 @@ public final class TerminalPane extends JTextPane {
                         : text.replace('\n', ' ').replace('\r', ' ');
                 bypass.replace(offset, length, singleLine,
                         TerminalTheme.style(TerminalTheme.FOREGROUND));
+            } else if (text != null && !text.isEmpty()) {
+                bypass.insertString(getDocument().getLength(),
+                        text.replace('\n', ' ').replace('\r', ' '),
+                        TerminalTheme.style(TerminalTheme.FOREGROUND));
+                setCaretPosition(getDocument().getLength());
             }
         }
 

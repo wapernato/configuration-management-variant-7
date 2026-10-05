@@ -3,6 +3,7 @@ package ru.mirea.emulator;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
@@ -22,9 +23,11 @@ public final class GuiTests {
         try {
             window.open();
             checks.equal(HostIdentity.current().title(), window.getTitle());
+            checks.truth(window.terminal().getText().contains("[config] vfs = <не задан>"));
             dialog(window.terminal());
             history(window.terminal());
             protection(window.terminal());
+            scriptDialog(window.terminal());
             preview(window);
             window.terminal().replaceInput("exit");
             action(window.terminal(), "submit");
@@ -68,6 +71,10 @@ public final class GuiTests {
         terminal.select(0, text.length());
         terminal.replaceSelection("");
         checks.equal(text, terminal.getText());
+        terminal.setCaretPosition(0);
+        terminal.replaceSelection("ls");
+        checks.equal("ls", terminal.input());
+        checks.truth(terminal.getText().startsWith(text));
         terminal.replaceInput("ls\ncd\rtest");
         checks.equal("ls cd test", terminal.input());
         terminal.replaceInput("");
@@ -78,12 +85,35 @@ public final class GuiTests {
                 new ActionEvent(terminal, ActionEvent.ACTION_PERFORMED, name));
     }
 
+    private void scriptDialog(TerminalPane terminal) {
+        try {
+            Path file = Files.createTempFile("variant7-gui ", ".txt");
+            try {
+                Files.writeString(file, "ls\npwd\ncd SHOULD_NOT_RUN\n");
+                StartupRunner.Outcome outcome = new StartupRunner().run(file,
+                        terminal::submitLine,
+                        message -> terminal.printMessage(message, TerminalTheme.RED));
+                checks.equal(StartupRunner.Status.FAILED, outcome.status());
+                checks.truth(terminal.getText().contains("строка 2"));
+                checks.equal(false, terminal.getText().contains("SHOULD_NOT_RUN"));
+                checks.equal("", terminal.input());
+                terminal.submitLine("ls");
+                checks.equal("", terminal.input());
+            } finally {
+                Files.deleteIfExists(file);
+            }
+        } catch (java.io.IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
     private void preview(TerminalWindow window) {
         String destination = System.getenv("PREVIEW_PATH");
         if (destination == null) {
             return;
         }
         TerminalPane terminal = window.terminal();
+        action(terminal, "clear");
         for (String command : new String[]{"ls", "cd \"мои документы\"", "ls a b"}) {
             terminal.replaceInput(command);
             terminal.submit();
