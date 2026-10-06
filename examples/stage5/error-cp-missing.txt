@@ -1,0 +1,3 @@
+echo before-error
+cp missing copy
+echo NEVER_EXECUTED

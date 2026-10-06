@@ -1,0 +1,3 @@
+echo before-error
+mkdir missing/child
+echo NEVER_EXECUTED

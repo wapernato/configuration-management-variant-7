@@ -34,10 +34,7 @@ public final class VirtualFileSystem {
     /** Разрешить путь с проверкой промежуточных каталогов и завершающего /. */
     public String resolve(String current, String input) {
         VirtualPath.resolve(current, input);
-        String path = input.equals("~") ? "/" : input;
-        if (path.startsWith("~/")) {
-            path = path.substring(1);
-        }
+        String path = VirtualPath.expand(input);
         String cursor = path.startsWith("/") ? "/" : current;
         for (String part : path.split("/", -1)) {
             if (part.isEmpty()) {
@@ -47,7 +44,7 @@ public final class VirtualFileSystem {
             if (part.equals("..")) {
                 cursor = VirtualPath.parent(cursor);
             } else if (!part.equals(".")) {
-                cursor = cursor.equals("/") ? "/" + part : cursor + "/" + part;
+                cursor = VirtualPath.join(cursor, part);
                 entry(cursor);
             }
         }
@@ -87,6 +84,47 @@ public final class VirtualFileSystem {
         if (!entry(path).directory()) {
             throw new IllegalArgumentException(path + ": не каталог");
         }
+    }
+
+    /** Создать независимое дерево для транзакции одной команды. */
+    VirtualFileSystem fork() {
+        return new VirtualFileSystem(entries);
+    }
+
+    /** Опубликовать изменения после успешного выполнения всех операндов. */
+    void replaceWith(VirtualFileSystem changed) {
+        entries.clear();
+        entries.putAll(changed.entries);
+    }
+
+    /** Создать каталоги в памяти; родительские каталоги при parents=true. */
+    void mkdir(String current, String input, boolean parents) {
+        new VfsChanges(this, entries).mkdir(current, input, parents);
+    }
+
+    /** Скопировать узел или дерево в память с проверкой конфликтов. */
+    void copy(String current, String source, String destination, boolean recursive, boolean noClobber) {
+        new VfsChanges(this, entries).copy(current, source, destination, recursive, noClobber);
+    }
+
+    /** Проверить наличие пути, не создавая узел. */
+    boolean exists(String path) {
+        return entries.containsKey(path);
+    }
+
+    /** Путь назначения: все промежуточные каталоги должны существовать. */
+    String target(String current, String input) {
+        VirtualPath.resolve(current, input);
+        String expanded = VirtualPath.expand(input);
+        String name = VirtualPath.name(expanded);
+        if (name.isEmpty() || name.equals(".") || name.equals("..")) {
+            return resolve(current, expanded);
+        }
+        int slash = expanded.lastIndexOf('/');
+        String parent = slash < 0 ? "." : (slash == 0 ? "/" : expanded.substring(0, slash));
+        String resolvedParent = resolve(current, parent);
+        requireDirectory(resolvedParent);
+        return VirtualPath.join(resolvedParent, name);
     }
 
     /** Число каталогов и файлов для диагностики загрузки. */

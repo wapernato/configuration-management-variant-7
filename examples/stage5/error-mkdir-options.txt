@@ -1,0 +1,3 @@
+echo before-error
+mkdir -z new
+echo NEVER_EXECUTED

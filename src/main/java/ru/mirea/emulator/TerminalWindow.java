@@ -37,7 +37,7 @@ public final class TerminalWindow extends JFrame {
         setSize(1040, 660);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        add(chrome("●  shell", "JAVA  /  STAGES 01 - 04"), BorderLayout.NORTH);
+        add(chrome("●  shell", "JAVA  /  STAGES 01 - 05"), BorderLayout.NORTH);
         terminal = new TerminalPane(identity, this::dispose, shell);
         config.debugLines().forEach(line -> terminal.printMessage(line, TerminalTheme.MUTED));
         terminal.printMessage(shell.vfsSummary(), TerminalTheme.MUTED);

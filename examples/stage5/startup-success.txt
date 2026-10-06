@@ -1,0 +1,30 @@
+ls -al
+mkdir new
+mkdir "папка для копий" another
+mkdir -p new/one/two
+mkdir -p new/one/two
+mkdir -- -folder
+cp hello.txt copy.txt
+wc copy.txt
+cp -n empty.txt copy.txt
+wc copy.txt
+cp empty.txt copy.txt
+wc copy.txt
+cp hello.txt binary.bin empty.txt "папка для копий"
+wc -c "папка для копий/binary.bin"
+wc "папка для копий/empty.txt"
+cp -r /a /tree
+ls /tree/b/c
+mkdir tree/extra
+cp -R /a /another
+ls /another/a/b/c
+cp -rn /a /another
+cd new/one
+mkdir ../sibling
+cp /hello.txt ../sibling/"имя файла.txt"
+wc ../sibling/"имя файла.txt"
+cd -
+cd /
+ls -al
+echo "Все изменения остались только в памяти"
+exit

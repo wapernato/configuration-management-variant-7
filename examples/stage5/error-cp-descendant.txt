@@ -1,0 +1,3 @@
+echo before-error
+cp -r a a/b
+echo NEVER_EXECUTED

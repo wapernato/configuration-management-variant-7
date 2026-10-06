@@ -42,7 +42,7 @@ public final class TerminalPane extends JTextPane {
         configure();
         installBindings();
         append("SHELL EMULATOR  /  VARIANT 07\n", TerminalTheme.BLUE);
-        append("ls  ·  cd  ·  pwd  ·  wc  ·  echo  ·  exit\n\n", TerminalTheme.MUTED);
+        append("ls  ·  cd  ·  pwd  ·  wc  ·  echo  ·  cp  ·  mkdir  ·  exit\n\n", TerminalTheme.MUTED);
         prompt();
     }
 

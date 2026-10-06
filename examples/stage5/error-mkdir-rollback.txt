@@ -1,0 +1,3 @@
+echo before-error
+mkdir rollback-test missing/child
+echo NEVER_EXECUTED

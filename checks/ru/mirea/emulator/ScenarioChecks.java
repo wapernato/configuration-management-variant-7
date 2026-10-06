@@ -14,7 +14,7 @@ public final class ScenarioChecks {
     public static void main(String[] arguments) throws Exception {
         Path csv = Path.of("examples/stage3/deep.csv");
         byte[] before = Files.readAllBytes(csv);
-        for (String directory : List.of("stage3", "stage4")) {
+        for (String directory : List.of("stage3", "stage4", "stage5")) {
             try (var files = Files.list(Path.of("examples", directory))) {
                 for (Path file : files.filter(p -> p.toString().endsWith(".txt")).sorted().toList()) {
                     scenario(file, VfsLoader.load(csv));

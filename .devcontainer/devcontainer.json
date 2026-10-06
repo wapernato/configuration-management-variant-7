@@ -1,0 +1,21 @@
+{
+  "name": "Variant 7 Java terminal",
+  "image": "mcr.microsoft.com/devcontainers/java:17-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "Java terminal desktop (noVNC)",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "./mvnw --batch-mode --no-transfer-progress verify",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": ["vscjava.vscode-java-pack"]
+    }
+  }
+}

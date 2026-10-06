@@ -15,6 +15,7 @@ public final class GuiChecks {
     public static void main(String[] arguments) throws Exception {
         SwingUtilities.invokeAndWait(GuiChecks::interactive);
         SwingUtilities.invokeAndWait(GuiChecks::startup);
+        SwingUtilities.invokeAndWait(GuiChecks::mutations);
         Check.report("GuiChecks");
     }
 
@@ -77,6 +78,29 @@ public final class GuiChecks {
             Check.equal(StartupRunner.Status.EXIT, result.status());
             Check.truth(errors.isEmpty());
             Check.equal(false, window.isDisplayable());
+        } finally {
+            window.dispose();
+        }
+    }
+
+    private static void mutations() {
+        TerminalWindow window = window();
+        try {
+            TerminalPane pane = window.terminal();
+            Check.truth(!pane.submitLine("mkdir -p work/nested").error());
+            Check.truth(!pane.submitLine("cp /hello.txt work/nested/copy.txt").error());
+            Check.truth(!pane.submitLine("cd work/nested").error());
+            Check.truth(pane.getText().endsWith("/work/nested$ "));
+            Check.equal("2 4 24 copy.txt", pane.submitLine("wc copy.txt").output());
+            Check.truth(pane.submitLine("cp /missing copy.txt").error());
+            Check.equal("2 4 24 copy.txt", pane.submitLine("wc copy.txt").output());
+            preview(window);
+            var errors = new ArrayList<String>();
+            Shell fresh = new Shell(VfsLoader.load(Path.of("examples/stage3/deep.csv")));
+            StartupRunner.Outcome result = new StartupRunner().run(
+                    Path.of("examples/stage5/startup-success.txt"), fresh::execute, errors::add);
+            Check.equal(StartupRunner.Status.EXIT, result.status());
+            Check.truth(errors.isEmpty());
         } finally {
             window.dispose();
         }

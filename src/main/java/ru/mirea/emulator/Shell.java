@@ -6,6 +6,7 @@ import java.util.List;
 public final class Shell {
     private final VirtualFileSystem vfs;
     private final BasicCommands commands;
+    private final AdditionalCommands additional;
 
     /** Создать оболочку с пустой виртуальной файловой системой. */
     public Shell() {
@@ -16,6 +17,7 @@ public final class Shell {
     public Shell(VirtualFileSystem vfs) {
         this.vfs = vfs;
         commands = new BasicCommands(vfs);
+        additional = new AdditionalCommands(vfs);
     }
 
     /** Диагностика числа загруженных узлов. */
@@ -48,6 +50,8 @@ public final class Shell {
             case "pwd" -> commands.pwd(arguments);
             case "wc" -> commands.wc(arguments);
             case "echo" -> commands.echo(arguments);
+            case "cp" -> additional.cp(currentDirectory(), arguments);
+            case "mkdir" -> additional.mkdir(currentDirectory(), arguments);
             case "exit" -> exit(arguments);
             default -> CommandResult.failure("неизвестная команда: " + name);
         };

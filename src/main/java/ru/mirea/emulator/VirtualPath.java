@@ -11,10 +11,7 @@ final class VirtualPath {
         if (input.isEmpty() || input.chars().anyMatch(Character::isISOControl)) {
             throw new IllegalArgumentException("неверный или пустой путь");
         }
-        String path = input.equals("~") ? "/" : input;
-        if (path.startsWith("~/")) {
-            path = path.substring(1);
-        }
+        String path = expand(input);
         String absolute = path.startsWith("/") ? path : current + "/" + path;
         Deque<String> parts = new ArrayDeque<>();
         for (String part : absolute.split("/")) {
@@ -27,6 +24,17 @@ final class VirtualPath {
             }
         }
         return "/" + String.join("/", parts);
+    }
+
+    static String expand(String input) {
+        if (input.equals("~")) {
+            return "/";
+        }
+        return input.startsWith("~/") ? input.substring(1) : input;
+    }
+
+    static String join(String parent, String name) {
+        return parent.equals("/") ? "/" + name : parent + "/" + name;
     }
 
     static String parent(String path) {
