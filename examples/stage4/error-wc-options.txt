@@ -1,0 +1,3 @@
+echo before-error
+wc -z hello.txt
+echo NEVER_EXECUTED

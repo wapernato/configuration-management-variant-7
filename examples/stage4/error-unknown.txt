@@ -1,0 +1,3 @@
+echo before-error
+unknown_command
+echo NEVER_EXECUTED

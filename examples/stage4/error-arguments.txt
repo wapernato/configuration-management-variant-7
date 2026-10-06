@@ -1,0 +1,3 @@
+echo before-error
+cd /a /b
+echo NEVER_EXECUTED

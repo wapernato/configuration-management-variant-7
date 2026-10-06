@@ -39,6 +39,14 @@ public final class TerminalPane extends JTextPane {
         this.shell = shell;
         this.identity = identity;
         this.onExit = onExit;
+        configure();
+        installBindings();
+        append("SHELL EMULATOR  /  VARIANT 07\n", TerminalTheme.BLUE);
+        append("ls  ·  cd  ·  pwd  ·  wc  ·  echo  ·  exit\n\n", TerminalTheme.MUTED);
+        prompt();
+    }
+
+    private void configure() {
         setFont(TerminalTheme.font());
         setBackground(TerminalTheme.BACKGROUND);
         setForeground(TerminalTheme.FOREGROUND);
@@ -46,6 +54,9 @@ public final class TerminalPane extends JTextPane {
         setSelectionColor(new Color(0x2D4663));
         setBorder(BorderFactory.createEmptyBorder(20, 22, 20, 22));
         ((AbstractDocument) getDocument()).setDocumentFilter(new InputFilter());
+    }
+
+    private void installBindings() {
         bind("ENTER", "submit", this::submit);
         bind("UP", "history-up", () -> navigateHistory(-1));
         bind("DOWN", "history-down", () -> navigateHistory(1));
@@ -56,9 +67,6 @@ public final class TerminalPane extends JTextPane {
         bind("ctrl E", "input-end", () -> setCaretPosition(getDocument().getLength()));
         bind("meta C", "copy-text", this::copy);
         bind("meta V", "paste-text", this::paste);
-        append("SHELL EMULATOR  /  VARIANT 07\n", TerminalTheme.BLUE);
-        append("ls [путь]  ·  cd [путь]  ·  exit\n\n", TerminalTheme.MUTED);
-        prompt();
     }
 
     private void bind(String key, String name, Runnable action) {
@@ -87,8 +95,8 @@ public final class TerminalPane extends JTextPane {
         append("\n", TerminalTheme.FOREGROUND);
         remember(line);
         CommandResult result = shell.execute(line);
-        if (!result.output().isEmpty()) {
-            append(result.output() + "\n", result.error()
+        if (!result.output().isEmpty() || result.newline()) {
+            append(result.output() + (result.newline() ? "\n" : ""), result.error()
                     ? TerminalTheme.RED : TerminalTheme.FOREGROUND);
         }
         if (result.exit()) {
@@ -183,7 +191,7 @@ public final class TerminalPane extends JTextPane {
         promptStart = getDocument().getLength();
         append(identity.user() + "@" + identity.host(), TerminalTheme.GREEN);
         append(":", TerminalTheme.MUTED);
-        append("~", TerminalTheme.BLUE);
+        append(shell.currentDirectory(), TerminalTheme.BLUE);
         append("$ ", TerminalTheme.FOREGROUND);
         inputStart = getDocument().getLength();
         setCharacterAttributes(TerminalTheme.style(TerminalTheme.FOREGROUND), true);

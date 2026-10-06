@@ -1,5 +1,4 @@
 ls
-cd "мои документы"
-ls 'папка с пробелами'
-cd my\ documents
+cd /
+ls /
 exit

@@ -17,3 +17,8 @@ CP="$PROJECT_DIR/build/classes:$PROJECT_DIR/build/test-classes"
 cd "$PROJECT_DIR"
 "$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.RegressionChecks
 "$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.VfsChecks
+"$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.BasicChecks
+"$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.ScenarioChecks
+if [ "${GUI_TESTS:-0}" = 1 ]; then
+    "$JAVA" -cp "$CP" ru.mirea.emulator.GuiChecks
+fi

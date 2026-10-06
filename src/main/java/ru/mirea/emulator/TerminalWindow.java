@@ -37,10 +37,16 @@ public final class TerminalWindow extends JFrame {
         setSize(1040, 660);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        add(chrome("●  shell", "JAVA  /  STAGES 01 - 03"), BorderLayout.NORTH);
+        add(chrome("●  shell", "JAVA  /  STAGES 01 - 04"), BorderLayout.NORTH);
         terminal = new TerminalPane(identity, this::dispose, shell);
         config.debugLines().forEach(line -> terminal.printMessage(line, TerminalTheme.MUTED));
         terminal.printMessage(shell.vfsSummary(), TerminalTheme.MUTED);
+        add(scrollPane(), BorderLayout.CENTER);
+        add(chrome("↑ / ↓  история    Ctrl+L  очистка    Ctrl+C  отмена",
+                "UTF-8  ·  GUI REPL"), BorderLayout.SOUTH);
+    }
+
+    private JScrollPane scrollPane() {
         JScrollPane scroll = new JScrollPane(terminal);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.getVerticalScrollBar().setPreferredSize(new Dimension(9, 0));
@@ -51,9 +57,7 @@ public final class TerminalWindow extends JFrame {
                 trackColor = TerminalTheme.BACKGROUND;
             }
         });
-        add(scroll, BorderLayout.CENTER);
-        add(chrome("↑ / ↓  история    Ctrl+L  очистка    Ctrl+C  отмена",
-                "UTF-8  ·  GUI REPL"), BorderLayout.SOUTH);
+        return scroll;
     }
 
     private JPanel chrome(String left, String right) {

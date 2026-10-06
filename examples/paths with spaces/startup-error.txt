@@ -1,4 +1,4 @@
 ls
 cd "папка с пробелами"
 unknown_command
-ls "ЭТА СТРОКА НЕ ДОЛЖНА ВЫПОЛНИТЬСЯ"
+ls NEVER_EXECUTED

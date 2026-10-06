@@ -31,6 +31,32 @@ public final class VirtualFileSystem {
         return new VirtualFileSystem(Map.of("/", new Entry(true, new byte[0])));
     }
 
+    /** Разрешить путь с проверкой промежуточных каталогов и завершающего /. */
+    public String resolve(String current, String input) {
+        VirtualPath.resolve(current, input);
+        String path = input.equals("~") ? "/" : input;
+        if (path.startsWith("~/")) {
+            path = path.substring(1);
+        }
+        String cursor = path.startsWith("/") ? "/" : current;
+        for (String part : path.split("/", -1)) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            requireDirectory(cursor);
+            if (part.equals("..")) {
+                cursor = VirtualPath.parent(cursor);
+            } else if (!part.equals(".")) {
+                cursor = cursor.equals("/") ? "/" + part : cursor + "/" + part;
+                entry(cursor);
+            }
+        }
+        if (path.endsWith("/")) {
+            requireDirectory(cursor);
+        }
+        return cursor;
+    }
+
     /** Узел по абсолютному нормализованному пути. */
     public Entry entry(String path) {
         Entry result = entries.get(path);

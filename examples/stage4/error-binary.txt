@@ -1,0 +1,3 @@
+echo before-error
+wc binary.bin
+echo NEVER_EXECUTED

@@ -1,0 +1,32 @@
+ls
+ls -a
+ls -l
+ls -al
+ls /hello.txt /empty.txt
+ls -- /hello.txt
+cd /a/b/c
+pwd
+ls .
+cd ..
+cd -
+cd ../../..
+cd "мои документы"
+ls
+wc текст.txt
+cd ~
+cd
+wc hello.txt
+wc -l hello.txt
+wc -w hello.txt
+wc -c binary.bin
+wc -l binary.bin
+wc -m "мои документы/текст.txt"
+wc -lwmc hello.txt
+wc hello.txt empty.txt
+wc -c -- hello.txt
+wc empty.txt
+echo "Привет, мир" 'два слова'
+echo
+echo -n "без перевода строки"
+echo " следующая команда"
+exit

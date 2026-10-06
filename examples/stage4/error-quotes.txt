@@ -1,0 +1,3 @@
+echo before-error
+echo "unfinished
+echo NEVER_EXECUTED

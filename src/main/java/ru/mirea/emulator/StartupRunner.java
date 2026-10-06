@@ -48,8 +48,8 @@ public final class StartupRunner {
             Function<String, CommandResult> execute) {
         System.out.println("$ " + line);
         CommandResult result = execute.apply(line);
-        if (!result.output().isEmpty()) {
-            System.out.println(result.output());
+        if (!result.output().isEmpty() || result.newline()) {
+            System.out.print(result.output() + (result.newline() ? "\n" : ""));
         }
         return result;
     }

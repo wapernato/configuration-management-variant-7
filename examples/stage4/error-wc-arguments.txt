@@ -1,0 +1,3 @@
+echo before-error
+wc
+echo NEVER_EXECUTED

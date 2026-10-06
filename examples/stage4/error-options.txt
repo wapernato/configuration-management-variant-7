@@ -1,0 +1,3 @@
+echo before-error
+ls -z
+echo NEVER_EXECUTED
