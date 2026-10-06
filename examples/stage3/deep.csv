@@ -1,0 +1,15 @@
+path,type,content
+/,directory,
+/мои документы,directory,
+/папка с пробелами,directory,
+/my documents,directory,
+/hello.txt,file,aGVsbG8gd29ybGQKc2Vjb25kIGxpbmUK
+/empty.txt,file,
+/binary.bin,file,AP+ACg==
+/мои документы/текст.txt,file,0J/RgNC40LLQtdGCINC80LjRgArQldGJ0LUg0YHRgtGA0L7QutCwCg==
+"/папка с пробелами/a,b.txt",file,Y29tbWEgbmFtZQo=
+/.hidden,file,aGlkZGVuCg==
+/a,directory,
+/a/b,directory,
+/a/b/c,directory,
+/a/b/c/deep.txt,file,dGhyZWUgbGV2ZWxzCg==

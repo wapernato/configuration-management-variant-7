@@ -19,7 +19,7 @@ import javax.swing.text.AttributeSet;
 /** Единая область терминала: защищённая история и ввод после приглашения. */
 public final class TerminalPane extends JTextPane {
     private static final int HISTORY_LIMIT = 500;
-    private final Shell shell = new Shell();
+    private final Shell shell;
     private final List<String> history = new ArrayList<>();
     private final HostIdentity identity;
     private final Runnable onExit;
@@ -31,6 +31,12 @@ public final class TerminalPane extends JTextPane {
 
     /** Создать терминал с историей и клавиатурными действиями. */
     public TerminalPane(HostIdentity identity, Runnable onExit) {
+        this(identity, onExit, new Shell());
+    }
+
+    /** Создать терминал с оболочкой, использующей загруженную VFS. */
+    public TerminalPane(HostIdentity identity, Runnable onExit, Shell shell) {
+        this.shell = shell;
         this.identity = identity;
         this.onExit = onExit;
         setFont(TerminalTheme.font());

@@ -22,6 +22,17 @@ public final class Main {
             return;
         }
         config.debugLines().forEach(System.out::println);
-        SwingUtilities.invokeLater(() -> new TerminalWindow(config).open());
+        launch(config);
+    }
+
+    private static void launch(AppConfig config) {
+        try {
+            Shell shell = new Shell(VfsLoader.load(config.vfs()));
+            System.out.println(shell.vfsSummary());
+            SwingUtilities.invokeLater(() -> new TerminalWindow(config, shell).open());
+        } catch (IllegalArgumentException exception) {
+            System.err.println(exception.getMessage());
+            System.exit(3);
+        }
     }
 }

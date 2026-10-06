@@ -67,7 +67,7 @@ public record AppConfig(Path vfs, Path startupScript, boolean help) {
     /** Справка по запуску приложения. */
     public static String usage() {
         return "Использование: ./run.sh [--vfs ПУТЬ] [--startup-script ПУТЬ]\n"
-                + "  --vfs             Путь к VFS (загрузка появится на этапе 3)\n"
+                + "  --vfs             UTF-8 CSV VFS; файлы в Base64 (без параметра пустая VFS)\n"
                 + "  --startup-script  UTF-8 скрипт; остановка при первой ошибке\n"
                 + "  -h, --help        Показать справку без запуска GUI";
     }

@@ -1,0 +1,3 @@
+ls
+cd a b
+ls NEVER_EXECUTED

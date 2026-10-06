@@ -1,0 +1,3 @@
+ls
+cd "unfinished
+ls NEVER_EXECUTED

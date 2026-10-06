@@ -24,6 +24,11 @@ public final class TerminalWindow extends JFrame {
 
     /** Создать окно с параметрами второго этапа. */
     public TerminalWindow(AppConfig config) {
+        this(config, new Shell(VfsLoader.load(config.vfs())));
+    }
+
+    /** Создать окно с уже проверенной VFS. */
+    public TerminalWindow(AppConfig config, Shell shell) {
         this.config = config;
         HostIdentity identity = HostIdentity.current();
         setTitle(identity.title());
@@ -32,9 +37,10 @@ public final class TerminalWindow extends JFrame {
         setSize(1040, 660);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        add(chrome("●  shell", "JAVA  /  STAGES 01 + 02"), BorderLayout.NORTH);
-        terminal = new TerminalPane(identity, this::dispose);
+        add(chrome("●  shell", "JAVA  /  STAGES 01 - 03"), BorderLayout.NORTH);
+        terminal = new TerminalPane(identity, this::dispose, shell);
         config.debugLines().forEach(line -> terminal.printMessage(line, TerminalTheme.MUTED));
+        terminal.printMessage(shell.vfsSummary(), TerminalTheme.MUTED);
         JScrollPane scroll = new JScrollPane(terminal);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.getVerticalScrollBar().setPreferredSize(new Dimension(9, 0));

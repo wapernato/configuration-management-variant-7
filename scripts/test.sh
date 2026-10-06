@@ -9,13 +9,11 @@ if [ -n "${JAVA_HOME:-}" ]; then
     JAVA="$JAVA_HOME/bin/java"
 fi
 mkdir -p "$PROJECT_DIR/build/test-classes"
-find "$PROJECT_DIR/tests" -name '*.java' -print |
+find "$PROJECT_DIR/checks" -name '*.java' -print |
     sed 's/.*/"&"/' > "$PROJECT_DIR/build/tests.txt"
 "$JAVAC" --release 17 -encoding UTF-8 -cp "$PROJECT_DIR/build/classes" \
     -d "$PROJECT_DIR/build/test-classes" @"$PROJECT_DIR/build/tests.txt"
 CP="$PROJECT_DIR/build/classes:$PROJECT_DIR/build/test-classes"
-"$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.CoreTests
-"$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.CliTests
-if [ "${GUI_TESTS:-0}" = 1 ]; then
-    "$JAVA" -cp "$CP" ru.mirea.emulator.GuiTests
-fi
+cd "$PROJECT_DIR"
+"$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.RegressionChecks
+"$JAVA" -Djava.awt.headless=true -cp "$CP" ru.mirea.emulator.VfsChecks

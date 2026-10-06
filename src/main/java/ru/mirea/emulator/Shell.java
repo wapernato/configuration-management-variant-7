@@ -6,6 +6,22 @@ import java.util.stream.Collectors;
 /** Логика этапа 1: ls и cd являются заглушками, exit завершает диалог. */
 public final class Shell {
     private static final int MAX_PATH_ARGUMENTS = 1;
+    private final VirtualFileSystem vfs;
+
+    /** Создать оболочку с пустой виртуальной файловой системой. */
+    public Shell() {
+        this(VirtualFileSystem.empty());
+    }
+
+    /** Использовать загруженное дерево VFS в текущем сеансе. */
+    public Shell(VirtualFileSystem vfs) {
+        this.vfs = vfs;
+    }
+
+    /** Диагностика числа загруженных узлов. */
+    public String vfsSummary() {
+        return vfs.summary();
+    }
 
     /** Исполнить одну строку и вернуть ошибку без исключения в GUI. */
     public CommandResult execute(String line) {
